@@ -6,30 +6,34 @@
 
 // @lc code=start
 #include <vector>
+#include <algorithm>
 using namespace std;
 
+// Top down approach
 class Solution
 {
 public:
+    int solve(vector<vector<int>> &tri, int n, int i, int j, vector<vector<int>> &dp)
+    {
+        if (i == n - 1)
+            return tri[i][j];
+
+        if (dp[i][j] != -1)
+            return dp[i][j];
+
+        int down = tri[i][j] + solve(tri, n, i + 1, j, dp);
+        int diagonal = tri[i][j] + solve(tri, n, i + 1, j + 1, dp);
+        dp[i][j] = min(down, diagonal);
+
+        return dp[i][j];
+    }
     int minimumTotal(vector<vector<int>> &triangle)
     {
         int n = triangle.size();
-        int minSum = triangle[0][0];
-        int prevIdx = 0;
-        for (int i = 1; i < n; i++)
-        {
-            if (triangle[i][prevIdx] < triangle[i][prevIdx + 1])
-            {
-                minSum += triangle[i][prevIdx];
-            }
-            else
-            {
-                minSum += triangle[i][prevIdx + 1];
-                prevIdx++;
-            }
-        }
+        vector<vector<int>> dp(n, vector<int>(n, -1));
+        int minsum = solve(triangle, n, 0, 0, dp);
 
-        return minSum;
+        return minsum;
     }
 };
 // @lc code=end
